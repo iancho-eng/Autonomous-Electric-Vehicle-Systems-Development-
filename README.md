@@ -42,7 +42,7 @@ A probabilistic occupancy grid mapping node was built in Python + ROS, fusing li
 
 Initial testing was first validated in simulation. After tuning `p_occ` from 0.75 → 0.9, `p_free` from 0.25 → 0.1, and increasing `map_res` from 0.1 m → 0.15 m, the algorithm produced significantly cleaner and more consistent results:
 
-![Occupancy Grid Simulation](Images/Occupancy_Grid_Result.png)
+![Occupancy Grid Simulation](Images/Occupancy_Grid_Map_Result.png)
 
 The algorithm was then deployed on the physical vehicle and tested in the lab hallway:
 
