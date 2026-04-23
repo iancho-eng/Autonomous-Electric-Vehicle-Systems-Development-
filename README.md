@@ -40,13 +40,19 @@ Homogeneous transformations were computed between the `base_link` frame and each
 ### Occupancy Grid Mapping
 A probabilistic occupancy grid mapping node was built in Python + ROS, fusing live LiDAR scans with IMU-corrected odometry poses. Each cell's state is updated using a recursive log-odds model, classifying cells as occupied, free, or unknown based on tunable probability thresholds.
 
-Initial testing with default parameters produced noisy, unrecognizable maps. After tuning `p_occ` from 0.75 → 0.9, `p_free` from 0.25 → 0.1, and increasing `map_res` from 0.1 m → 0.15 m, the algorithm produced significantly cleaner and more consistent results:
+Initial testing was first validated in simulation. After tuning `p_occ` from 0.75 → 0.9, `p_free` from 0.25 → 0.1, and increasing `map_res` from 0.1 m → 0.15 m, the algorithm produced significantly cleaner and more consistent results:
 
-![Occupancy Grid Result](Images/Occupancy_Grid_Map_Result.png)
+![Occupancy Grid Simulation](Images/Occupancy_Grid_Result.png)
 
-The final map captured during hallway testing, alongside the real environment being mapped:
+The algorithm was then deployed on the physical vehicle and tested in the lab hallway:
 
-![Hallway Map Final](images/hallway_map_final.png)
+![Real Hallway](Images/Hallway_Obstacle_Layout.png)
+
+The resulting LiDAR-generated map of the hallway captured in real time via ROS:
+
+![Hallway Map](Images/Hallway_Map_Final.png)
+
+The larger cell size acts as a spatial filter, averaging out small LiDAR measurement errors and vehicle pose jitter that would otherwise introduce noise at finer resolutions.
 
 ### PD Wall-Following Controller
 A PD controller was implemented to center the vehicle between hallway walls using the differential LiDAR distance measurements (d_l and d_r). Gains were tuned experimentally to balance responsiveness and stability across straight segments and corners.
@@ -54,11 +60,7 @@ A PD controller was implemented to center the vehicle between hallway walls usin
 ### Obstacle Avoidance & Velocity Control
 An exponential velocity decay safety layer was added, smoothly decelerating the vehicle as obstacles approach and commanding a full stop within a defined safety distance. A virtual barrier navigation algorithm was also implemented to find the largest gap in the LiDAR field of view and steer toward it for obstacle avoidance.
 
-During real-world testing, an edge case was identified where an accessibility ramp opening beside the obstacle course caused the algorithm to misidentify it as the best direction of travel. This highlighted a known limitation of pure gap-finding approaches in environments with large side openings:
-
-![Obstacle Layout](images/obstacle_layout.png)
-
-This was addressed by narrowing the FOV angle and increasing `d_safe` to detect side walls as obstacles sooner, directing the vehicle toward the correct forward path.
+During real-world testing, an edge case was identified where a large side opening (such as an accessibility ramp) caused the algorithm to misidentify it as the best direction of travel. This was addressed by narrowing the FOV angle and increasing `d_safe` to detect side walls as obstacles sooner, directing the vehicle toward the correct forward path.
 
 ### RGB-D Camera Integration
 The barrier navigation node was extended to subscribe to the RealSense depth image and camera info topics. Depth image pixels are projected into 3D space using camera intrinsic parameters, identifying potential collision points undetectable by the 2D LiDAR scan plane and overriding LiDAR-based decisions when necessary.
