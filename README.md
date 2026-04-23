@@ -42,7 +42,7 @@ A probabilistic occupancy grid mapping node was built in Python + ROS, fusing li
 
 Initial testing with default parameters produced noisy, unrecognizable maps. After tuning `p_occ` from 0.75 → 0.9, `p_free` from 0.25 → 0.1, and increasing `map_res` from 0.1 m → 0.15 m, the algorithm produced significantly cleaner and more consistent results:
 
-![Occupancy Grid Result](images/occupancy_grid_result.png)
+![Occupancy Grid Result](Images/Occupancy_Grid_Map_Result.png)
 
 The final map captured during hallway testing, alongside the real environment being mapped:
 
